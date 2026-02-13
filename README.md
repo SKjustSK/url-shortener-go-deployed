@@ -6,12 +6,20 @@ A high-performance URL shortening service built with **Go (Fiber)**, **Redis (Up
 
 ---
 
+## Build Instructions & Source Code
+
+For local development setup, Docker instructions, and complete source code, please visit the main repository:
+
+**https://github.com/SKjustSK/url-shortener-go**
+
+---
+
 ## Tech Stack
 
 * **Frontend:** React + Vite + Tailwind CSS (Hosted on Vercel)
 * **Backend:** Go (Golang) + Fiber (Hosted on Render)
 * **Database:** Redis (Upstash Serverless)
-* **Infrastructure:** Docker & Docker Compose (for development)
+* **Infrastructure:** Docker & Docker Compose
 
 ---
 

@@ -54,7 +54,7 @@ const ShortenerForm: React.FC = () => {
             
             {/* --- GitHub Logo Link --- */}
             <a 
-                href="https://github.com/SKjustSK/url-shortener-go" 
+                href="https://github.com/SKjustSK/url-shortener-go-deployed" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="absolute top-5 right-5 text-gray-400 hover:text-gray-900 transition-colors duration-200"
