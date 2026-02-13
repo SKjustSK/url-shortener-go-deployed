@@ -1,0 +1,45 @@
+# --- General / OS ---
+.DS_Store
+.vscode/
+.idea/
+*.log
+.env
+.env.local
+.env.*.local
+
+# --- Frontend (React + Vite) ---
+node_modules/
+dist/
+dist-ssr/
+*.local
+.eslintcache
+# Vite specific
+.vite/
+
+# --- Backend (Go) ---
+# Binaries and architectures
+bin/
+main
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+# Test coverage
+*.out
+# Go modules vendor (if you use it)
+vendor/
+
+# --- Redis & Infrastructure ---
+# If you run Redis locally and it saves snapshots
+dump.rdb
+appendonly.aof
+# Docker volumes (if you store redis data in a local folder)
+.docker-data/
+redis-data/
+
+# --- Environment Secrets (CRITICAL) ---
+# Never commit your database credentials or API keys
+.env
+backend/.env
+frontend/.env
