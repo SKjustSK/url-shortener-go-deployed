@@ -1,77 +1,52 @@
-# url-shortener-go
+# URL Shortener (Go + Redis)
 
-A high-performance URL shortening service built with **Go**, **Redis**, and **React (Vite)**.
+A high-performance URL shortening service built with **Go (Fiber)**, **Redis (Upstash)**, and **React (Vite)**.
 
----
-
-## Getting Started
-
-### Prerequisites
-Ensure you have the following installed on your machine:
-* [Docker](https://www.docker.com/get-started)
-* [Docker Compose](https://docs.docker.com/compose/install/)
-
-### 1. Project Structure
-Ensure your environment files are located in the following directories:
-
-**Backend Configuration (`backend/api/.env`):**
-```env
-DB_ADDR="db:4000"
-DB_PASS=""
-APP_PORT=":3000"
-DOMAIN="localhost:3000"
-API_QUOTA=10
-FRONTEND_DOMAIN="http://localhost:4000"
-
-```
-
-**Frontend Configuration (`frontend/.env`):**
-
-```env
-VITE_GO_SHORTEN_URL=http://localhost:3000/api/shorten
-VITE_GO_DOMAIN=http://localhost:3000
-
-```
+**Live Demo:** https://url-shortener-go-deployed.vercel.app/
 
 ---
 
-### 2. Launching the Project
+## Tech Stack
 
-To build the images and start all services (Frontend, Backend, and Redis) simultaneously, run:
-
-```bash
-docker-compose up --build
-
-```
-
-Once the containers are healthy:
-
-* **Frontend UI:** [http://localhost:4000](https://www.google.com/search?q=http://localhost:4000)
-* **Backend API:** [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000)
-* **Redis Store:** Internal port `4000` (Accessible via the `db` service name)
+* **Frontend:** React + Vite + Tailwind CSS (Hosted on Vercel)
+* **Backend:** Go (Golang) + Fiber (Hosted on Render)
+* **Database:** Redis (Upstash Serverless)
+* **Infrastructure:** Docker & Docker Compose (for development)
 
 ---
 
-## Tech Stack & Architecture
+## API Endpoints
 
-* **Frontend:** React + Vite for a blazing fast, modern user interface.
-* **Backend:** Go (Golang) handling API requests, validation, and redirection logic.
-* **Database:** Redis for lightning-fast key-value storage and TTL (Time-To-Live) management.
-* **Containerization:** Docker Compose for seamless multi-service orchestration.
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/shorten` | JSON body `{ "url": "https://google.com", "short": "goog", "expiry": 24 }` |
+| `GET` | `/:url` | Redirects to the original long URL. |
 
 ---
 
-## Useful Commands
+## Deployment Configuration
 
-| Action | Command |
-| --- | --- |
-| **Start Services** | `docker-compose up -d` |
-| **Stop Services** | `docker-compose down` |
-| **View Logs** | `docker-compose logs -f` |
-| **Rebuild** | `docker-compose up --build` |
+### Backend (Render)
+The Go backend is deployed as a Web Service on **Render**.
+
+**Environment Variables:**
+* `API_QUOTA`: `10` (Rate limit per IP)
+* `APP_PORT`: `3000` (Internal port)
+* `DOMAIN`: `url-shortener-go-deployed.onrender.com` (Used for generating short links)
+* `FRONTEND_DOMAIN`: `https://url-shortener-go-deployed.vercel.app` (Allowed CORS origin)
+* `REDIS_URL`: `rediss://default:password@...` (Upstash connection string)
+
+### Frontend (Vercel)
+The React frontend is deployed on **Vercel**.
+
+**Environment Variables:**
+* `VITE_GO_SHORTEN_URL`: `https://url-shortener-go-deployed.onrender.com/api/shorten`
+* `VITE_GO_DOMAIN`: `https://url-shortener-go-deployed.onrender.com`
 
 ---
 
 ## API Limits
 
-The current configuration is set to an **API_QUOTA** of `10` requests per period to prevent service abuse. You can modify this in the `backend/api/.env` file.
+To prevent abuse, the API implements rate limiting using Redis.
+* **Default Quota:** 10 requests per user per IP.
+* **Reset Period:** 30 minutes.
