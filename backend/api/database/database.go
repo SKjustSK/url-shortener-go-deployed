@@ -12,19 +12,20 @@ var Ctx = context.Background()
 
 // initializes a connection to a specific Redis database (0-15)
 func CreateClient(dbNo int) *redis.Client {
-	// Parse the connection string from the environment variable
 	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
 	if err != nil {
-		// If the URL is invalid, we can't proceed.
-		// Since the function signature only returns *redis.Client, we panic here.
 		panic(err)
 	}
+	// Upstash only allows db 0 to be used, therefore opting db 0 always
+	opt.DB = 0
 
-	// Override the DB number with the argument passed to the function
-	opt.DB = dbNo
-
-	// Create the client with the parsed options
 	rdb := redis.NewClient(opt)
+
+	// ADD THIS: Test the connection immediately
+	if err := rdb.Ping(Ctx).Err(); err != nil {
+		// This will print the EXACT error to your docker logs
+		panic("Redis connection failed: " + err.Error())
+	}
 
 	return rdb
 }

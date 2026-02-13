@@ -11,34 +11,46 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// setupRoutes defines the application endpoints
 func setupRoutes(app *fiber.App) {
-	// API Endpoints
 	app.Get("/:url", routes.ResolveURL)
 	app.Post("/api/shorten", routes.ShotenURL)
 }
 
 func main() {
-	// Load .env for local development.
-	// On Render, we ignore the error because variables are injected directly.
-	_ = godotenv.Load()
+	// 1. Load .env file (Local dev only)
+	// On Render, this does nothing because the file won't exist, which is fine.
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
 
-	// Initialize a new Fiber app instance
 	app := fiber.New()
-
-	// Use Logger middleware to log HTTP requests/responses
 	app.Use(logger.New())
 
-	// CORS Configuration
-	// Ensure FRONTEND_DOMAIN in Render Dashboard matches your Vercel URL
+	// 2. CORS: Strict checking for your Frontend
+	// If FRONTEND_DOMAIN is empty, this might block requests.
+	frontend := os.Getenv("FRONTEND_DOMAIN")
+	if frontend == "" {
+		log.Println("Warning: FRONTEND_DOMAIN is not set")
+	}
+
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: os.Getenv("FRONTEND_DOMAIN"),
+		AllowOrigins: frontend,
 		AllowHeaders: "Origin, Content-Type, Accept",
 	}))
 
-	// Register the routes
 	setupRoutes(app)
 
-	// Start the server
-	log.Fatal(app.Listen(os.Getenv("APP_PORT")))
+	// 3. Port Handling (Crucial for Render)
+	// Render injects "PORT". If not found, fall back to "APP_PORT" or "3000"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = os.Getenv("APP_PORT")
+	}
+	if port == "" {
+		port = "3000" // Default fallback
+	}
+
+	// fiber.Listen expects ":3000", Render gives "10000"
+	// We ensure the colon is present.
+	log.Fatal(app.Listen(":" + port))
 }
